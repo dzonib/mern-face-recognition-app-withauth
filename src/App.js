@@ -31,8 +31,31 @@ const particlesOptions = {
 class App extends Component {
 	state = {
     input: '',
-    imageUrl: ''
+		imageUrl: '',
+		box: {}
 	};
+
+
+	calculateFaceLocation = (data) => {
+		// this.setState({box: data})
+		const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
+		const image = document.querySelector('#inputImage');
+		const width = Number(image.width);
+		const height = Number(image.width);
+
+
+		return {
+			leftCol: clarifaiFace.left_col * width,
+			topRow: clarifaiFace.top_row * height,
+			rightCol: width - (clarifaiFace.right_col * width),
+			bottomRow: height - (clarifaiFace.bottom_row * height)
+		}
+	}
+
+	displayFaceBox = (box) => {
+		console.log(box)
+		this.setState({box})
+	}
 
 	onInputChange = (e) => {
 		this.setState({ input: e.target.value });
@@ -42,18 +65,12 @@ class App extends Component {
     this.setState((state) => ({imageUrl: state.input}));
  		app.models
 			.predict(Clarifai.FACE_DETECT_MODEL, this.state.input, { language: 'zh' })
-			.then(
-				function(response) {
-					console.log(response.outputs[0].data.regions[0].region_info.bounding_box)
-				},
-				function(err) {
-					console.log(err)
-				}
-			);
+			.then(response => this.displayFaceBox(this.calculateFaceLocation(response))
+					// console.log(response.outputs[0].data.regions[0].region_info.bounding_box)
+			).catch(e => console.log(e))
 	};
 
 	render() {
-    console.log(this.state.imageUrl);
 		return (
 			<div className="App">
 				<Particles className="particles" params={particlesOptions} />
@@ -61,7 +78,7 @@ class App extends Component {
 				<Logo />
 				<Rank />
 				<ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-				<FaceRecognition imageUrl={this.state.imageUrl}/>
+				<FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
 			</div>
 		);
 	}

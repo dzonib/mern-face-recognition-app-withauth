@@ -1,0 +1,16 @@
+.bounding-box {
+  /* background-image: url('../../assets/homer.jpg');
+  background-size: contain;
+  background-repeat: no-repeat; */
+  position: absolute;
+  box-shadow: 0 0 0 3px #149df2 inset;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* top: box.topRow,
+right: box.rightCol,
+bottom: box.bottomRow,
+left: box.leftCol */
